@@ -8,6 +8,8 @@
 
 <h1>🛒 Grovio — Fresh Groceries. Delivered Smarter.</h1>
 
+<h3><a href="https://grovio-online.vercel.app/" target="_blank">🌐 View Live Demo : grovio-online.vercel.app</a></h3>
+
 <p>
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
