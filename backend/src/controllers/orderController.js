@@ -114,7 +114,7 @@ export const createOrder = async (req, res, next) => {
         city: address.city,
         state: address.state,
         zipCode: address.zipCode,
-        coordinates: address.coordinates.coordinates
+        coordinates: address.coordinates
       },
       paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid', // cod is pending, mock card checkout is paid
       paymentMethod,
