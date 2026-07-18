@@ -782,7 +782,7 @@ export const AdminDashboard = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3.5 px-3 font-semibold text-gray-500 capitalize">{p.category?.replace('-', ' ')}</td>
+                    <td className="py-3.5 px-3 font-semibold text-gray-500 capitalize">{p.category?.name || (typeof p.category === 'string' ? p.category.replace('-', ' ') : 'Uncategorized')}</td>
                     <td className="py-3.5 px-3 text-center text-gray-600 dark:text-dark-text font-bold">{p.unit}</td>
                     <td className="py-3.5 px-3 text-center">
                       <p className="font-bold text-gray-900 dark:text-white">₹{p.discountPrice || p.price}</p>
