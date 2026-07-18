@@ -45,6 +45,7 @@ export const Register = () => {
     }
   };
 
+  const rolesList = [
     { id: 'customer', title: 'Customer', desc: 'Shop & order groceries' },
     { id: 'delivery_partner', title: 'Rider', desc: 'Accept orders & deliver' },
     { id: 'store_manager', title: 'Manager', desc: 'Manage stock & catalog' }
