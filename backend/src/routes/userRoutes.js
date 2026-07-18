@@ -2,7 +2,8 @@ import express from 'express';
 import { 
   getAllUsers, 
   updateUserRole, 
-  toggleUserSuspension 
+  toggleUserSuspension,
+  deleteUser
 } from '../controllers/userController.js';
 import { protect, restrictTo } from '../middlewares/auth.js';
 
@@ -15,5 +16,6 @@ router.use(restrictTo('admin'));
 router.get('/', getAllUsers);
 router.put('/:id/role', updateUserRole);
 router.patch('/:id/toggle-status', toggleUserSuspension);
+router.delete('/:id', deleteUser);
 
 export default router;

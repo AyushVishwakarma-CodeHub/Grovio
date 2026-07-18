@@ -45,11 +45,9 @@ export const Register = () => {
     }
   };
 
-  const rolesList = [
     { id: 'customer', title: 'Customer', desc: 'Shop & order groceries' },
     { id: 'delivery_partner', title: 'Rider', desc: 'Accept orders & deliver' },
-    { id: 'store_manager', title: 'Manager', desc: 'Manage stock & catalog' },
-    { id: 'admin', title: 'Admin', desc: 'Overall control & analytics' }
+    { id: 'store_manager', title: 'Manager', desc: 'Manage stock & catalog' }
   ];
 
   return (
@@ -176,7 +174,7 @@ export const Register = () => {
             <label className="text-xs font-bold text-gray-700 dark:text-dark-text uppercase tracking-wide">
               Select Your Role
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {rolesList.map((role) => {
                 const isActive = selectedRole === role.id;
                 return (

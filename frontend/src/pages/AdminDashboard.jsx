@@ -217,6 +217,18 @@ export const AdminDashboard = () => {
     }
   };
 
+  // User Actions: Delete User
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Permanently delete this user account?')) return;
+    try {
+      await api.delete(`/users/${userId}`);
+      toast.info('User account permanently deleted.');
+      fetchDashboardData();
+    } catch (error) {
+      toast.error('Failed to delete user account');
+    }
+  };
+
   // Coupon Actions: Create Coupon
   const handleCreateCoupon = async (data) => {
     try {
@@ -808,9 +820,10 @@ export const AdminDashboard = () => {
                 <tr className="border-b border-gray-100 dark:border-slate-800 text-gray-400 uppercase tracking-widest text-[9px]">
                   <th className="py-3 px-4">User details</th>
                   <th className="py-3 px-4">Email</th>
+                  <th className="py-3 px-4">Joined At</th>
                   <th className="py-3 px-4">Access Role</th>
                   <th className="py-3 px-4">Suspension status</th>
-                  <th className="py-3 px-4 text-right">Role Mutator</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -818,6 +831,7 @@ export const AdminDashboard = () => {
                   <tr key={usr._id} className="border-b border-gray-50 dark:border-slate-850 hover:bg-gray-50/10 dark:hover:bg-slate-800/10">
                     <td className="py-4 px-4 font-bold text-gray-900 dark:text-white">{usr.name}</td>
                     <td className="py-4 px-4 text-gray-500 font-mono">{usr.email}</td>
+                    <td className="py-4 px-4 text-gray-500 font-mono">{new Date(usr.createdAt).toLocaleDateString()} {new Date(usr.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                     <td className="py-4 px-4">
                       <span className={`px-2 py-0.5 text-[9px] font-bold border rounded-full capitalize ${
                         usr.role === 'admin' ? 'border-red-200 text-red-500 bg-red-50 dark:bg-red-950/20' :
@@ -838,10 +852,10 @@ export const AdminDashboard = () => {
                             : 'bg-red-50 dark:bg-red-950/20 text-red-500 border border-red-100 dark:border-red-950/30 animate-pulse'
                         }`}
                       >
-                        {usr.status === 'active' ? 'Active (Suspend)' : 'Suspended (Activate)'}
+                        {usr.status === 'active' ? 'Active (Suspend)' : 'Suspended (Approve)'}
                       </button>
                     </td>
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-4 px-4 text-right flex items-center justify-end gap-2">
                       <select
                         value={usr.role}
                         disabled={usr._id === currentUser._id}
@@ -853,6 +867,15 @@ export const AdminDashboard = () => {
                         <option value="store_manager">Manager</option>
                         <option value="admin">Admin</option>
                       </select>
+                      
+                      <button
+                        onClick={() => handleDeleteUser(usr._id)}
+                        disabled={usr._id === currentUser._id}
+                        className="p-1.5 bg-red-50 dark:bg-red-950/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                        title="Delete User"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}

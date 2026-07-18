@@ -70,3 +70,27 @@ export const toggleUserSuspension = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Permanently delete a user account
+ */
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      throw new CustomError('User account not found', 404);
+    }
+
+    if (user._id.toString() === req.user._id.toString()) {
+      throw new CustomError('Cannot delete your own admin account', 400);
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return sendSuccess(res, 200, 'User account successfully deleted');
+  } catch (error) {
+    next(error);
+  }
+};
