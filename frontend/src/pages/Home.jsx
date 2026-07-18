@@ -72,13 +72,11 @@ export const Home = () => {
         <div className="absolute left-1/3 bottom-0 w-48 h-48 bg-emerald-400/20 rounded-full blur-xl translate-y-12" />
         
         {/* Realistic Grocery Image (Right Side) */}
-        <div className="absolute right-0 top-0 h-full w-[60%] z-0 hidden sm:block">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-transparent to-transparent z-10" />
+        <div className="absolute right-0 bottom-0 h-full w-1/2 z-0 hidden sm:flex justify-end items-end pointer-events-none">
           <img 
-            src="https://images.unsplash.com/photo-1604719312566-8fa246131c11?auto=format&fit=crop&q=80&w=1200" 
+            src="https://freepngimg.com/thumb/grocery/54006-2-grocery-photos-free-download-image.png" 
             alt="Fresh Groceries" 
-            className="w-full h-full object-cover object-center opacity-90"
-            style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 30%)', maskImage: 'linear-gradient(to right, transparent, black 30%)' }}
+            className="h-[140%] object-contain object-bottom origin-bottom-right translate-x-4 translate-y-8 drop-shadow-2xl"
           />
         </div>
         
