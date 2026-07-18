@@ -8,8 +8,8 @@ export const ThemeProvider = ({ children }) => {
     if (savedTheme) {
       return savedTheme === 'dark';
     }
-    // Default to system settings
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Default to light theme (white background) if no preference saved
+    return false;
   });
 
   useEffect(() => {
