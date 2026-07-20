@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/axios.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -25,6 +26,24 @@ export const CartDrawer = ({ isOpen, onClose }) => {
   const [couponCode, setCouponCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [activeCoupon, setActiveCoupon] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [isApplying, setIsApplying] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchCoupons();
+    }
+  }, [isOpen]);
+
+  const fetchCoupons = async () => {
+    try {
+      const response = await api.get('/coupons');
+      // Filter out inactive/expired if needed, or backend already sorts them
+      setAvailableCoupons(response.data.data.coupons.filter(c => new Date(c.expiryDate) > new Date()));
+    } catch (error) {
+      console.error('Failed to fetch coupons', error);
+    }
+  };
 
   // Bill Calculations
   const tax = Math.round(subtotal * 0.05); // 5% GST
@@ -59,26 +78,32 @@ export const CartDrawer = ({ isOpen, onClose }) => {
     toast.info('Item removed from cart');
   };
 
-  const handleApplyCoupon = (e) => {
-    e.preventDefault();
-    const code = couponCode.trim().toUpperCase();
-    
-    if (code === 'GROVIO50') {
-      if (subtotal < 199) {
-        toast.error('Minimum order value for GROVIO50 is ₹199');
-        return;
-      }
-      setAppliedDiscount(50);
-      setActiveCoupon('GROVIO50');
-      toast.success('Coupon GROVIO50 applied! ₹50 saved.');
+  const handleApplyCoupon = async (e, codeToApply = null) => {
+    if (e) e.preventDefault();
+    const code = (codeToApply || couponCode).trim().toUpperCase();
+    if (!code) return;
+
+    if (cartItems.length === 0) {
+      toast.warning('Your cart is empty');
+      return;
+    }
+
+    try {
+      setIsApplying(true);
+      const response = await api.post('/coupons/validate', {
+        code,
+        cartSubtotal: subtotal
+      });
+      
+      const { discountAmount } = response.data.data;
+      setAppliedDiscount(discountAmount);
+      setActiveCoupon(code);
       setCouponCode('');
-    } else if (code === 'FREESHIP') {
-      // Mock free shipping coupon
-      toast.success('Coupon applied! Free shipping active.');
-      setActiveCoupon('FREESHIP');
-      setCouponCode('');
-    } else {
-      toast.error('Invalid coupon code. Try GROVIO50');
+      toast.success(`${code} applied! ₹${discountAmount} saved.`);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Invalid coupon code');
+    } finally {
+      setIsApplying(false);
     }
   };
 
@@ -256,11 +281,39 @@ export const CartDrawer = ({ isOpen, onClose }) => {
                         />
                         <button
                           type="submit"
-                          className="py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-xl text-xs font-semibold shadow-glow transform active:scale-95 transition-all"
+                          disabled={isApplying}
+                          className="py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-xl text-xs font-semibold shadow-glow transform active:scale-95 transition-all disabled:opacity-50"
                         >
-                          Apply
+                          {isApplying ? 'Applying...' : 'Apply'}
                         </button>
                       </form>
+                    )}
+
+                    {/* Available Coupons List */}
+                    {!activeCoupon && availableCoupons.length > 0 && (
+                      <div className="mt-4 border-t border-dashed border-gray-200 dark:border-slate-800 pt-3">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-wider">Available Coupons</p>
+                        <div className="flex flex-col gap-2">
+                          {availableCoupons.map(coupon => (
+                            <div key={coupon._id} className="flex justify-between items-center bg-white dark:bg-dark-card p-2 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm">
+                              <div>
+                                <p className="text-xs font-bold text-gray-900 dark:text-white uppercase font-mono">{coupon.code}</p>
+                                <p className="text-[9px] text-gray-500 dark:text-dark-muted">
+                                  Save {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`} 
+                                  {coupon.minPurchase > 0 && ` on orders above ₹${coupon.minPurchase}`}
+                                </p>
+                              </div>
+                              <button 
+                                onClick={() => handleApplyCoupon(null, coupon.code)}
+                                disabled={isApplying || subtotal < coupon.minPurchase}
+                                className="text-[10px] font-bold text-primary-500 hover:text-white hover:bg-primary-500 px-2.5 py-1 rounded-lg transition-colors border border-primary-100 dark:border-primary-900/30 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-primary-500"
+                              >
+                                Apply
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
 

@@ -10,10 +10,12 @@ import { protect, restrictTo } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.use(protect);
-
+// Public routes for customers
 router.get('/', getCoupons);
 router.post('/validate', validateCouponCode);
+
+// Admin / Store Manager protected routes
+router.use(protect);
 router.post('/', restrictTo('admin', 'store_manager'), createCoupon);
 router.put('/:id', restrictTo('admin', 'store_manager'), updateCoupon);
 router.delete('/:id', restrictTo('admin', 'store_manager'), deleteCoupon);
